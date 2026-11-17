@@ -9,6 +9,7 @@ const cors = require('cors');
 dotenv.config({path: path.join(__dirname, 'config', 'config.env')});
 
 const connectDatabase = require('./config/connectDatabase');
+const { isDatabaseReady } = connectDatabase;
 const products = require('./routes/product');
 const orders = require('./routes/order');
 
@@ -21,7 +22,10 @@ connectDatabase();
 app.use(express.json());
 app.use(cors());
 
-app.get('/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/health', (req, res) => res.json({
+    status: 'ok',
+    database: isDatabaseReady() ? 'connected' : 'disconnected'
+}));
 app.use('/api/v1/', products);
 app.use('/api/v1/', orders);
 

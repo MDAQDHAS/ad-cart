@@ -41,14 +41,14 @@ export default function Cart({cartItems, setCartItems}) {
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(cartItems)
         })
-        .then(res => res.json().then(data => ({ok: res.ok && data.success})))
-        .then(({ok}) => {
-            if (!ok) throw new Error('failed');
+        .then(res => res.json().then(data => ({ok: res.ok && data.success, message: data && data.message})))
+        .then(({ok, message}) => {
+            if (!ok) throw new Error(message || 'failed');
             setCartItems([]); 
             setComplete(true);
             toast.success("Order Success!")
         })
-        .catch(() => toast.error("Could not place order. Please try again."))
+        .catch((err) => toast.error(err.message === 'failed' ? "Could not place order. Please try again." : (err.message || "Could not place order. Please try again.")))
     }
 
 

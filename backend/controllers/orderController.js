@@ -34,6 +34,12 @@ exports.createOrder = async (req, res) => {
                 }
             }
         } else {
+            if (process.env.NODE_ENV === 'production') {
+                return res.status(503).json({
+                    success: false,
+                    message: 'Database is currently unavailable. Orders cannot be saved.'
+                });
+            }
             for (const item of cartItems) {
                 const p = fallbackProducts.find((x) => x._id === item.product._id);
                 if (p) p.stock = Math.max(0, p.stock - item.qty);
